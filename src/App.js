@@ -26,16 +26,16 @@ const App = () => {
         handleClearCell(row, col);
       } else {
         switch (event.key) {
-          case "ArrowUp":
+          case "ArrowLeft":
             setSelectedCell([Math.max(row - 1, 0), col]);
             break;
-          case "ArrowDown":
+          case "ArrowRight":
             setSelectedCell([Math.min(row + 1, 4), col]);
             break;
-          case "ArrowLeft":
+          case "ArrowUp":
             setSelectedCell([row, Math.max(col - 1, 0)]);
             break;
-          case "ArrowRight":
+          case "ArrowDown":
             setSelectedCell([row, Math.min(col + 1, 4)]);
             break;
           default:
