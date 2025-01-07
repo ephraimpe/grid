@@ -5,8 +5,10 @@ import "./App.css";
 
 const App = () => {
   const [availableLetters, setAvailableLetters] = useState([
-    "E", "E", "E", "G", "I", "N", "N", "O", "O", "R", "R", "T", "T", "U", "U",
+    "E", "E", "E", "G", "I", "N", "N", "O",
+    "O", "R", "R", "T", "T", "U", "U", "A",
   ]);
+  const [usedLetters, setUsedLetters] = useState([]);
   const [grid, setGrid] = useState(Array(5).fill(Array(5).fill("")));
   const [selectedCell, setSelectedCell] = useState([0, 0]);
 
@@ -15,7 +17,7 @@ const App = () => {
       if (!selectedCell) return;
       const [row, col] = selectedCell;
 
-      const isLetter = /^[A-Z]$/i.test(event.key); // Check if the key is a letter
+      const isLetter = /^[A-Z]$/i.test(event.key);
       const isDelete = event.key === "Backspace" || event.key === "Delete";
 
       if (isLetter) {
@@ -49,17 +51,7 @@ const App = () => {
   const handlePlaceLetter = (letter) => {
     const [row, col] = selectedCell;
 
-    // Remove the previous letter from the grid and make it available again
-    const previousLetter = grid[row][col];
-    if (previousLetter) {
-      updateAvailableLetters(previousLetter, true);
-    }
-
-    // Check if the letter is in the available pool
-    const letterIndex = availableLetters.indexOf(letter);
-    if (letterIndex === -1) return;
-
-    // Update the grid
+    // Update the grid with the new letter
     const newGrid = grid.map((gridRow, rowIndex) =>
       rowIndex === row
         ? gridRow.map((cell, colIndex) => (colIndex === col ? letter : cell))
@@ -67,8 +59,17 @@ const App = () => {
     );
     setGrid(newGrid);
 
-    // Update available letters by blanking out the used letter
-    updateAvailableLetters(letter, false);
+    // Mark the letter as used
+    if (!usedLetters.includes(letter)) {
+      setUsedLetters([...usedLetters, letter]);
+    }
+
+    // Move to the next cell automatically
+    if (col < 4) {
+      setSelectedCell([row, col + 1]);
+    } else if (row < 4) {
+      setSelectedCell([row + 1, 0]);
+    }
   };
 
   const handleClearCell = (row, col) => {
@@ -83,46 +84,40 @@ const App = () => {
     );
     setGrid(newGrid);
 
-    // Add the cleared letter back to available letters
-    updateAvailableLetters(letterToClear, true);
+    // Remove the letter from the used list if no other cells are using it
+    const isStillUsed = newGrid.some((gridRow) =>
+      gridRow.includes(letterToClear)
+    );
+    if (!isStillUsed) {
+      setUsedLetters(usedLetters.filter((letter) => letter !== letterToClear));
+    }
   };
 
-  const updateAvailableLetters = (letter, add) => {
-    const newAvailableLetters = [...availableLetters];
-    if (add) {
-      const emptyIndex = newAvailableLetters.indexOf("");
-      if (emptyIndex !== -1) {
-        newAvailableLetters[emptyIndex] = letter;
-      } else {
-        newAvailableLetters.push(letter);
-      }
-    } else {
-      const letterIndex = newAvailableLetters.indexOf(letter);
-      if (letterIndex !== -1) {
-        newAvailableLetters[letterIndex] = "";
-      }
-    }
-    setAvailableLetters(newAvailableLetters);
-  };
+  const isLetterUsed = (letter) => usedLetters.includes(letter);
 
   return (
     <div className="App">
       <h1>GRID</h1>
       <div className="letter-pool">
         {availableLetters.map((letter, index) => (
-          <span key={index} className="letter">
-            {letter || " "}
+          <span
+            key={index}
+            className={`letter ${isLetterUsed(letter) ? "used" : ""}`}
+          >
+            {letter}
           </span>
         ))}
       </div>
       <Grid
         grid={grid}
-        setGrid={setGrid}
         selectedCell={selectedCell}
         setSelectedCell={setSelectedCell}
       />
       <button className="check-button">Check</button>
-      <Keyboard handlePlaceLetter={handlePlaceLetter} />
+      <Keyboard
+        handlePlaceLetter={handlePlaceLetter}
+        handleClear={() => handleClearCell(...selectedCell)}
+      />
     </div>
   );
 };

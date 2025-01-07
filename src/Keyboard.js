@@ -6,7 +6,7 @@ const qwertyLayout = [
   ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 
-const Keyboard = ({ handlePlaceLetter }) => {
+const Keyboard = ({ handlePlaceLetter, handleClear }) => {
   return (
     <div className="keyboard">
       {qwertyLayout.map((row, rowIndex) => (
@@ -22,6 +22,11 @@ const Keyboard = ({ handlePlaceLetter }) => {
           ))}
         </div>
       ))}
+      <div className="keyboard-row">
+        <button className="key delete" onClick={handleClear}>
+          Delete
+        </button>
+      </div>
     </div>
   );
 };
