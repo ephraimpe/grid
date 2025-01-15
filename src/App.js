@@ -1,16 +1,39 @@
 import React, { useState, useEffect } from "react";
-import Grid from "./Grid";
 import Keyboard from "./Keyboard";
 import "./App.css";
 
 const App = () => {
   const [availableLetters, setAvailableLetters] = useState([
-    "E", "E", "E", "G", "I", "N", "N", "O",
-    "O", "R", "R", "T", "T", "U", "U", "A",
+    { letter: "E", used: 0 },
+    { letter: "E", used: 0 },
+    { letter: "E", used: 0 },
+    { letter: "G", used: 0 },
+    { letter: "I", used: 0 },
+    { letter: "N", used: 0 },
+    { letter: "N", used: 0 },
+    { letter: "O", used: 0 },
+    { letter: "O", used: 0 },
+    { letter: "R", used: 0 },
+    { letter: "R", used: 0 },
+    { letter: "T", used: 0 },
+    { letter: "T", used: 0 },
+    { letter: "U", used: 0 },
+    { letter: "U", used: 0 },
+    { letter: "A", used: 0 },
   ]);
-  const [usedLetters, setUsedLetters] = useState([]);
-  const [grid, setGrid] = useState(Array(5).fill(Array(5).fill("")));
+  const [grid, setGrid] = useState(
+    Array(5)
+      .fill(null)
+      .map(() => Array(5).fill(""))
+  );
   const [selectedCell, setSelectedCell] = useState([0, 0]);
+
+  const blackCells = [
+    [1, 1],
+    [1, 3],
+    [3, 1],
+    [3, 3],
+  ];
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -26,17 +49,17 @@ const App = () => {
         handleClearCell(row, col);
       } else {
         switch (event.key) {
-          case "ArrowLeft":
-            setSelectedCell([Math.max(row - 1, 0), col]);
-            break;
-          case "ArrowRight":
-            setSelectedCell([Math.min(row + 1, 4), col]);
-            break;
           case "ArrowUp":
-            setSelectedCell([row, Math.max(col - 1, 0)]);
+            navigateGrid(-1, 0);
             break;
           case "ArrowDown":
-            setSelectedCell([row, Math.min(col + 1, 4)]);
+            navigateGrid(1, 0);
+            break;
+          case "ArrowLeft":
+            navigateGrid(0, -1);
+            break;
+          case "ArrowRight":
+            navigateGrid(0, 1);
             break;
           default:
             break;
@@ -48,8 +71,18 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedCell]);
 
+  const navigateGrid = (rowDelta, colDelta) => {
+    let [row, col] = selectedCell;
+    do {
+      row = Math.max(0, Math.min(4, row + rowDelta));
+      col = Math.max(0, Math.min(4, col + colDelta));
+    } while (blackCells.some(([r, c]) => r === row && c === col));
+    setSelectedCell([row, col]);
+  };
+
   const handlePlaceLetter = (letter) => {
     const [row, col] = selectedCell;
+    if (blackCells.some(([r, c]) => r === row && c === col)) return;
 
     // Update the grid with the new letter
     const newGrid = grid.map((gridRow, rowIndex) =>
@@ -59,17 +92,18 @@ const App = () => {
     );
     setGrid(newGrid);
 
-    // Mark the letter as used
-    if (!usedLetters.includes(letter)) {
-      setUsedLetters([...usedLetters, letter]);
+    // Mark one instance of the letter as used
+    const newAvailableLetters = [...availableLetters];
+    const letterIndex = newAvailableLetters.findIndex(
+      (l) => l.letter === letter && l.used === 0
+    );
+    if (letterIndex !== -1) {
+      newAvailableLetters[letterIndex].used = 1;
     }
+    setAvailableLetters(newAvailableLetters);
 
     // Move to the next cell automatically
-    if (col < 4) {
-      setSelectedCell([row, col + 1]);
-    } else if (row < 4) {
-      setSelectedCell([row + 1, 0]);
-    }
+    navigateGrid(0, 1);
   };
 
   const handleClearCell = (row, col) => {
@@ -84,36 +118,57 @@ const App = () => {
     );
     setGrid(newGrid);
 
-    // Remove the letter from the used list if no other cells are using it
-    const isStillUsed = newGrid.some((gridRow) =>
-      gridRow.includes(letterToClear)
+    // Mark one instance of the cleared letter as available
+    const newAvailableLetters = [...availableLetters];
+    const letterIndex = newAvailableLetters.findIndex(
+      (l) => l.letter === letterToClear && l.used === 1
     );
-    if (!isStillUsed) {
-      setUsedLetters(usedLetters.filter((letter) => letter !== letterToClear));
+    if (letterIndex !== -1) {
+      newAvailableLetters[letterIndex].used = 0;
     }
+    setAvailableLetters(newAvailableLetters);
   };
-
-  const isLetterUsed = (letter) => usedLetters.includes(letter);
 
   return (
     <div className="App">
       <h1>GRID</h1>
       <div className="letter-pool">
-        {availableLetters.map((letter, index) => (
+        {availableLetters.map((letterObj, index) => (
           <span
             key={index}
-            className={`letter ${isLetterUsed(letter) ? "used" : ""}`}
+            className={`letter ${letterObj.used === 1 ? "used" : ""}`}
           >
-            {letter}
+            {letterObj.letter}
           </span>
         ))}
       </div>
-      <Grid
-        grid={grid}
-        selectedCell={selectedCell}
-        setSelectedCell={setSelectedCell}
-      />
-      <button className="check-button">Check</button>
+      <div className="grid">
+        {grid.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const isBlackCell = blackCells.some(
+              ([r, c]) => r === rowIndex && c === colIndex
+            );
+            return (
+              <div
+                key={`${rowIndex}-${colIndex}`}
+                className={`grid-cell ${
+                  isBlackCell
+                    ? "black-cell"
+                    : selectedCell[0] === rowIndex &&
+                      selectedCell[1] === colIndex
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() => {
+                  if (!isBlackCell) setSelectedCell([rowIndex, colIndex]);
+                }}
+              >
+                {!isBlackCell && cell}
+              </div>
+            );
+          })
+        )}
+      </div>
       <Keyboard
         handlePlaceLetter={handlePlaceLetter}
         handleClear={() => handleClearCell(...selectedCell)}

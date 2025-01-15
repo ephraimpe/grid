@@ -1,32 +1,44 @@
 import React from "react";
-
-const qwertyLayout = [
-  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["Z", "X", "C", "V", "B", "N", "M"],
-];
+import "./Keyboard.css";
 
 const Keyboard = ({ handlePlaceLetter, handleClear }) => {
+  const keys = [
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+    ["Z", "X", "C", "V", "B", "N", "M"],
+  ];
+
+  const handleKeyClick = (key) => {
+    if (key === "DELETE") {
+      handleClear();
+    } else {
+      handlePlaceLetter(key);
+    }
+  };
+
   return (
     <div className="keyboard">
-      {qwertyLayout.map((row, rowIndex) => (
+      {keys.map((row, rowIndex) => (
         <div key={rowIndex} className="keyboard-row">
           {row.map((key) => (
             <button
               key={key}
               className="key"
-              onClick={() => handlePlaceLetter(key)}
+              onClick={() => handleKeyClick(key)}
             >
               {key}
             </button>
           ))}
+          {rowIndex === 2 && (
+            <button
+              className="key delete-key"
+              onClick={() => handleKeyClick("DELETE")}
+            >
+              DELETE
+            </button>
+          )}
         </div>
       ))}
-      <div className="keyboard-row">
-        <button className="key delete" onClick={handleClear}>
-          Delete
-        </button>
-      </div>
     </div>
   );
 };

@@ -1,0 +1,53 @@
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .keyboard-row {
+    display: flex;
+    justify-content: center;
+    margin: 2px 0;
+  }
+  
+  .key {
+    padding: 10px 15px;
+    margin: 2px;
+    border: 1px solid #666666;
+    border-radius: 5px;
+    background-color: #969696;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  
+  .key:hover {
+    background-color: #666666;
+  }
+  
+  .key:active {
+    background-color: #d6d8db;
+  }
+  
+  .delete-key {
+    margin-left: 10px; /* Space to the right of the M key */
+    padding: 24px 40px; /* Larger size for full "DELETE" visibility */
+    font-size: 16px;
+    background-color: #f1808b; /* Light red background to make it stand out */
+    border: 1px solid #f05161;
+    text-align: center; /* Center text horizontally */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    height: 45px; /* Ensure a consistent height */
+    box-sizing: border-box; /* Include padding and border in size */
+  }
+  
+  .delete-key:hover {
+    background-color: #f05161;
+  }
+  
+  .delete-key:active {
+    background-color: #e0a7ad;
+  }
