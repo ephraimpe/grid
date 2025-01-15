@@ -17,7 +17,10 @@
     border: 1px solid #666666;
     border-radius: 5px;
     background-color: #969696;
+    color: white;
     font-size: 16px;
+    font-weight: bold;
+    ;
     cursor: pointer;
     text-transform: uppercase;
   }
@@ -32,8 +35,9 @@
   
   .delete-key {
     margin-left: 10px; /* Space to the right of the M key */
-    padding: 24px 40px; /* Larger size for full "DELETE" visibility */
+    padding: 10px 30px; /* Larger size for full "DELETE" visibility */
     font-size: 16px;
+    font-weight: bold;
     background-color: #f1808b; /* Light red background to make it stand out */
     border: 1px solid #f05161;
     text-align: center; /* Center text horizontally */
