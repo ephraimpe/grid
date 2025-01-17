@@ -4,22 +4,22 @@ import "./App.css";
 
 const App = () => {
   const [availableLetters, setAvailableLetters] = useState([
-    { id: 1, letter: "E", used: 0 },
-    { id: 2, letter: "E", used: 0 },
+    { id: 1, letter: "A", used: 0 },
+    { id: 2, letter: "C", used: 0 },
     { id: 3, letter: "E", used: 0 },
-    { id: 4, letter: "G", used: 0 },
-    { id: 5, letter: "I", used: 0 },
-    { id: 6, letter: "N", used: 0 },
+    { id: 4, letter: "E", used: 0 },
+    { id: 5, letter: "L", used: 0 },
+    { id: 6, letter: "M", used: 0 },
     { id: 7, letter: "N", used: 0 },
-    { id: 8, letter: "O", used: 0 },
+    { id: 8, letter: "N", used: 0 },
     { id: 9, letter: "O", used: 0 },
-    { id: 10, letter: "R", used: 0 },
+    { id: 10, letter: "O", used: 0 },
     { id: 11, letter: "R", used: 0 },
-    { id: 12, letter: "T", used: 0 },
-    { id: 13, letter: "T", used: 0 },
-    { id: 14, letter: "U", used: 0 },
-    { id: 15, letter: "U", used: 0 },
-    { id: 16, letter: "A", used: 0 },
+    { id: 12, letter: "R", used: 0 },
+    { id: 13, letter: "R", used: 0 },
+    { id: 14, letter: "R", used: 0 },
+    { id: 15, letter: "T", used: 0 },
+    { id: 16, letter: "T", used: 0 },
   ]);
   
   const [grid, setGrid] = useState(
